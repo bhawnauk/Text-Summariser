@@ -1,97 +1,239 @@
-import client from "../config/openai";
+import ollama from "ollama";
+
+interface Options {
 
 
-interface Options{
+length: string;
 
-    length:string;
+tone: string;
 
-    tone:string;
+format: string;
+
 
 }
 
-
-
 export async function generateSummary(
 
-    text:string,
 
-    options:Options
+text: string,
 
-){
+options: Options
+
+
+) {
+
+
+const lengthInstructions = {
+
+
+    short: `
+
+        Write a very concise summary.
+
+        Use approximately 2-3 sentences.
+
+        Include only the most important information.
+
+    `,
+
+
+    medium: `
+
+        Write a balanced summary.
+
+        Use approximately 4-5 sentences.
+
+        Include the main ideas and important supporting details.
+
+    `,
+
+
+    long: `
+
+        Write a detailed summary.
+
+        Use approximately 6-8 sentences.
+
+        Include all major ideas and important context.
+
+    `
+
+
+};
+
+
+const toneInstructions = {
+
+
+    casual: `
+
+        Use a friendly, natural and conversational tone.
+
+        Keep the language easy to understand.
+
+    `,
+
+
+    professional: `
+
+        Use a clear, polished and professional tone.
+
+        Keep the writing precise and objective.
+
+    `
+
+
+};
+
+
+const formatInstructions = {
+
+
+    paragraph: `
+
+        Return the summary as clear paragraphs.
+
+        Do not use bullet points.
+
+    `,
+
+
+    bullets: `
+
+        Return the summary as bullet points.
+
+        Each bullet should contain one important idea.
+
+        Start every bullet with "- ".
+
+        Do not return the answer as a large paragraph.
+
+    `
+
+
+};
+
+
+const selectedLength =
+
+    lengthInstructions[
+
+        options.length as keyof typeof lengthInstructions
+
+    ] || lengthInstructions.medium;
+
+
+const selectedTone =
+
+    toneInstructions[
+
+        options.tone as keyof typeof toneInstructions
+
+    ] || toneInstructions.professional;
+
+
+const selectedFormat =
+
+    formatInstructions[
+
+        options.format as keyof typeof formatInstructions
+
+    ] || formatInstructions.paragraph;
 
 
 const prompt = `
 
-You are an expert editor.
 
+You are an expert AI text summarisation assistant.
 
-Summarise this text.
+Summarise the text below accurately.
 
+IMPORTANT RULES:
 
-Requirements:
+* Keep only the most important information.
 
-- Preserve important facts
-- Keep names and dates
-- Do not hallucinate
-- Make it easy to understand
+* Do not repeat the original text unnecessarily.
 
+* Do not add information that is not present.
 
-Summary length:
+* Do not invent facts.
 
-${options.length}
+* Preserve the original meaning.
 
+* Be direct and clear.
 
-Tone:
+SUMMARY LENGTH:
 
-${options.tone}
+${selectedLength}
 
+TONE:
 
+${selectedTone}
 
-TEXT:
+OUTPUT FORMAT:
+
+${selectedFormat}
+
+TEXT TO SUMMARISE:
 
 ${text}
+
+Return only the final summary.
 
 `;
 
 
-
-const response =
-await client.chat.completions.create({
-
-model:"gpt-4.1-mini",
+const response = await ollama.chat({
 
 
-messages:[
-
-{
-role:"system",
-content:
-"You create accurate summaries."
-},
-
-{
-role:"user",
-content:prompt
-}
-
-],
+    model: "qwen2.5:1.5b",
 
 
-temperature:0.3
+    messages: [
+
+
+        {
+
+            role: "user",
+
+            content: prompt
+
+        }
+
+
+    ],
+
+
+    stream: true,
+
+
+    options: {
+
+
+        temperature: 0.2,
+
+
+        num_predict:
+
+
+            options.length === "short"
+
+                ? 100
+
+                : options.length === "medium"
+
+                    ? 180
+
+                    : 300
+
+
+    }
 
 
 });
 
 
-
-return (
-response
-.choices[0]
-.message
-.content
-||
-""
-);
+return response;
 
 
 }

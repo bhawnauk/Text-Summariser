@@ -1,54 +1,64 @@
 import {
-  BrowserRouter,
-  Routes,
-  Route
+
+    BrowserRouter,
+
+    Routes,
+
+    Route
+
 } from "react-router-dom";
 
-import Navbar from "./components/Navbar";
 
 import Home from "./pages/Home";
-import History from "./pages/History";
-import Settings from "./pages/Settings";
+
+import HowItWorks from "./pages/HowItWorks";
+
+import About from "./pages/About";
 
 
-export default function App(){
-
-return(
-
-<BrowserRouter>
-
-<Navbar/>
+export default function App() {
 
 
-<main>
+    return (
 
-<Routes>
-
-<Route
-path="/"
-element={<Home/>}
-/>
+        <BrowserRouter>
 
 
-<Route
-path="/history"
-element={<History/>}
-/>
+            <Routes>
 
 
-<Route
-path="/settings"
-element={<Settings/>}
-/>
+                <Route
+
+                    path="/"
+
+                    element={<Home />}
+
+                />
 
 
-</Routes>
+                <Route
 
-</main>
+                    path="/how-it-works"
+
+                    element={<HowItWorks />}
+
+                />
 
 
-</BrowserRouter>
+                <Route
 
-)
+                    path="/about"
+
+                    element={<About />}
+
+                />
+
+
+            </Routes>
+
+
+        </BrowserRouter>
+
+    );
 
 }

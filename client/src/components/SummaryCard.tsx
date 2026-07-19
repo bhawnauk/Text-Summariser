@@ -1,143 +1,330 @@
-interface Props{
+interface SummaryCardProps {
 
-summary:string;
+    summary: string;
 
 }
 
 
 export default function SummaryCard({
-summary
-}:Props){
+
+    summary
+
+}: SummaryCardProps) {
 
 
-function copy(){
+    const lines = summary
 
-navigator.clipboard.writeText(summary);
+        .split("\n")
 
-}
+        .map((line) => line.trim())
 
-
-function download(){
-
-const blob =
-new Blob(
-[summary],
-{
-type:"text/plain"
-}
-);
+        .filter(Boolean);
 
 
-const url =
-URL.createObjectURL(blob);
+    const isBulletSummary = lines.some((line) =>
+
+        line.startsWith("-") ||
+
+        line.startsWith("•") ||
+
+        line.startsWith("*")
+
+    );
 
 
-const a=document.createElement("a");
+    return (
 
-a.href=url;
+        <div className="
 
-a.download="summary.txt";
+            mt-8
 
-a.click();
+            overflow-hidden
 
-}
+            rounded-3xl
 
+            border
 
+            border-slate-200
 
-return(
+            bg-white
 
-<div className="
-mt-8
-rounded-3xl
-bg-white
-shadow-xl
-border
-p-8
-">
+            shadow-xl
 
+            shadow-slate-200/50
 
-<div className="
-flex
-justify-between
-items-center
-mb-5
-">
+            dark:border-slate-800
+
+            dark:bg-slate-950
+
+            dark:shadow-black/20
+
+        ">
 
 
-<h2 className="
-text-xl
-font-bold
-">
+            {/* Header */}
 
-Summary
+            <div className="
 
-</h2>
+                flex
 
+                items-center
 
-<div className="
-flex
-gap-3
-">
+                justify-between
 
+                border-b
 
-<button
+                border-slate-100
 
-onClick={copy}
+                px-6
 
-className="
-px-4
-py-2
-rounded-lg
-bg-slate-100
-hover:bg-slate-200
-"
+                py-5
 
->
+                dark:border-slate-800
 
-Copy
-
-</button>
+            ">
 
 
-
-<button
-
-onClick={download}
-
-className="
-px-4
-py-2
-rounded-lg
-bg-blue-600
-text-white
-"
-
->
-
-Download
-
-</button>
+                <div className="flex items-center gap-3">
 
 
-</div>
+                    <div className="
+
+                        flex
+
+                        h-9
+
+                        w-9
+
+                        items-center
+
+                        justify-center
+
+                        rounded-xl
+
+                        bg-slate-950
+
+                        text-sm
+
+                        text-white
+
+                        dark:bg-white
+
+                        dark:text-slate-950
+
+                    ">
 
 
-</div>
+                        ✦
 
 
-<p className="
-leading-relaxed
-text-slate-700
-">
-
-{summary}
-
-</p>
+                    </div>
 
 
-</div>
+                    <div>
 
 
-)
+                        <p className="
+
+                            text-sm
+
+                            font-semibold
+
+                            text-slate-950
+
+                            dark:text-white
+
+                        ">
+
+
+                            Summary
+
+
+                        </p>
+
+
+                        <p className="
+
+                            text-xs
+
+                            text-slate-400
+
+                        ">
+
+
+                            Generated locally with AI
+
+
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <button
+
+                    onClick={() =>
+
+                        navigator.clipboard.writeText(summary)
+
+                    }
+
+                    className="
+
+                        rounded-lg
+
+                        px-3
+
+                        py-2
+
+                        text-xs
+
+                        font-medium
+
+                        text-slate-500
+
+                        transition
+
+                        hover:bg-slate-100
+
+                        hover:text-slate-950
+
+                        dark:hover:bg-slate-800
+
+                        dark:hover:text-white
+
+                    "
+
+                >
+
+
+                    Copy
+
+
+                </button>
+
+
+            </div>
+
+
+            {/* Summary Content */}
+
+            <div className="
+
+                px-6
+
+                py-8
+
+                text-base
+
+                leading-8
+
+                text-slate-700
+
+                dark:text-slate-300
+
+            ">
+
+
+                {isBulletSummary ? (
+
+
+                    <ul className="space-y-4">
+
+
+                        {lines.map((line, index) => {
+
+
+                            const cleanLine = line.replace(
+
+                                /^[-•*]\s*/,
+
+                                ""
+
+                            );
+
+
+                            return (
+
+                                <li
+
+                                    key={index}
+
+                                    className="
+
+                                        flex
+
+                                        gap-3
+
+                                        leading-7
+
+                                    "
+
+                                >
+
+
+                                    <span className="
+
+                                        mt-3
+
+                                        h-2
+
+                                        w-2
+
+                                        shrink-0
+
+                                        rounded-full
+
+                                        bg-slate-950
+
+                                        dark:bg-white
+
+                                    " />
+
+
+                                    <span>
+
+                                        {cleanLine}
+
+                                    </span>
+
+
+                                </li>
+
+                            );
+
+                        })}
+
+
+                    </ul>
+
+
+                ) : (
+
+
+                    <p className="
+
+                        whitespace-pre-line
+
+                    ">
+
+
+                        {summary}
+
+
+                    </p>
+
+
+                )}
+
+
+            </div>
+
+
+        </div>
+
+    );
 
 }

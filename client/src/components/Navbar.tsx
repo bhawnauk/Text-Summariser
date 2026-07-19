@@ -1,135 +1,222 @@
-import {
-Link
-} from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-import ThemeToggle from "./ThemeToggle";
+export default function Navbar() {
 
 
-export default function Navbar(){
-
-return(
-
-<nav
-className="
-sticky
-top-0
-z-50
-bg-white/80
-dark:bg-slate-900/80
-backdrop-blur-xl
-border-b
-border-slate-200
-dark:border-slate-700
-">
+const location = useLocation();
 
 
-<div
-className="
-max-w-6xl
-mx-auto
-px-6
-py-4
-flex
-items-center
-justify-between
-">
+const isActive = (path: string) => {
+
+    return location.pathname === path;
+
+};
 
 
-<div>
+return (
 
-<Link
-to="/"
-className="
-text-2xl
-font-bold
-bg-gradient-to-r
-from-blue-600
-to-indigo-600
-bg-clip-text
-text-transparent
-"
+    <nav className="
+
+        mx-auto
+
+        flex
+
+        max-w-7xl
+
+        items-center
+
+        justify-between
+
+        px-6
+
+        py-6
+
+    ">
+
+
+        {/* Logo */}
+
+        <Link
+
+            to="/"
+
+            className="flex items-center gap-3"
+
+        >
+
+
+            <div className="
+
+                flex
+
+                h-10
+
+                w-10
+
+                items-center
+
+                justify-center
+
+                rounded-2xl
+
+                bg-slate-950
+
+                text-lg
+
+                text-white
+
+                shadow-lg
+
+                shadow-slate-950/20
+
+                dark:bg-white
+
+                dark:text-slate-950
+
+            ">
+
+                ✦
+
+            </div>
+
+
+            <span className="
+
+                text-xl
+
+                font-semibold
+
+                tracking-tight
+
+                text-slate-950
+
+                dark:text-white
+
+            ">
+
+                Text Summariser
+
+            </span>
+
+
+        </Link>
+
+
+        {/* Desktop Navigation */}
+
+        <div className="
+
+            hidden
+
+            items-center
+
+            gap-8
+
+            text-sm
+
+            md:flex
+
+        ">
+
+
+            <Link
+
+                to="/"
+
+                className={`
+
+                    transition
+
+                    ${
+
+                        isActive("/")
+
+                            ? "text-slate-950 dark:text-white"
+
+                            : "text-slate-500 hover:text-slate-950 dark:text-slate-400 dark:hover:text-white"
+
+                    }
+
+                `}
+
+            >
+
+                Product
+
+            </Link>
+
+
+            <Link
+
+                to="/how-it-works"
+
+                className={`
+
+                    transition
+
+                    ${
+
+                        isActive("/how-it-works")
+
+                            ? "text-slate-950 dark:text-white"
+
+                            : "text-slate-500 hover:text-slate-950 dark:text-slate-400 dark:hover:text-white"
+
+                    }
+
+                `}
+
+            >
+
+                How it works
+
+            </Link>
+
+
+            <Link
+
+                to="/about"
+
+                className={`
+
+                    transition
+
+                    ${
+
+                        isActive("/about")
+
+                            ? "text-slate-950 dark:text-white"
+
+                            : "text-slate-500 hover:text-slate-950 dark:text-slate-400 dark:hover:text-white"
+
+                    }
+
+                `}
+
+            >
+
+                About
+
+            </Link>
+
+
+        </div>
+
+
+        {/* CTA */}
+
+      <button
+    onClick={() => {
+        window.location.href = "/";
+    }}
+    className="..."
 >
-
-SummarAI
-
-</Link>
+    Try it free
+</button>
 
 
-</div>
+    </nav>
 
-
-
-<div
-className="
-flex
-items-center
-gap-6
-"
->
-
-
-<Link
-
-className="
-text-slate-600
-dark:text-slate-200
-hover:text-blue-600
-"
-
-to="/"
->
-
-Home
-
-</Link>
-
-
-
-<Link
-
-className="
-text-slate-600
-dark:text-slate-200
-hover:text-blue-600
-"
-
-to="/history"
->
-
-History
-
-</Link>
-
-
-
-<Link
-
-className="
-text-slate-600
-dark:text-slate-200
-hover:text-blue-600
-"
-
-to="/settings"
->
-
-Settings
-
-</Link>
-
-
-
-<ThemeToggle/>
-
-
-</div>
-
-
-</div>
-
-
-</nav>
-
-)
+);
 
 }

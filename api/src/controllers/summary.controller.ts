@@ -1,150 +1,94 @@
-import {
-Request,
-Response,
-NextFunction
-}
-from "express";
+import { Request, Response, NextFunction } from "express";
 
-
-import {
-summarySchema
-}
-from "../validators/summary.validator";
-
-
-import {
-generateSummary
-}
-from "../services/openai.services";
-
-
-import {
-processText
-}
-from "../services/processor.service";
-
+import { generateSummary } from "../services/openai.services";
 
 
 export async function summarise(
 
-req:Request,
+    req: Request,
 
-res:Response,
+    res: Response,
 
-next:NextFunction
+    next: NextFunction
 
-){
-
-
-try{
+) {
 
 
-const data =
-summarySchema.parse(
-req.body
-);
+    try {
 
 
+        const {
 
-//
-// Step 1
-// Clean and chunk
-//
+            text,
 
-const processed =
-await processText(
-data.text
-);
+            length = "medium",
 
+            tone = "professional",
 
+            format = "paragraph"
 
-//
-// Step 2
-// Summarise chunks
-//
-
-const summaries=[];
+        } = req.body;
 
 
-for(
-const chunk of processed.chunks
-){
+        if (!text || !text.trim()) {
+
+            return res.status(400).json({
+
+                error: "Text is required."
+
+            });
+
+        }
 
 
-const result =
-await generateSummary(
+        const response = await generateSummary(
 
-chunk,
+            text,
 
-{
-length:data.length,
-tone:data.tone
-}
+            {
 
-);
+                length,
 
+                tone,
 
-summaries.push(result);
+                format
 
+            }
 
-}
+        );
 
 
+        let summary = "";
 
 
-//
-// Step 3
-// Combine summaries
-//
+        for await (const part of response) {
 
-const finalSummary =
-await generateSummary(
+            summary += part.message.content;
 
-summaries.join("\n"),
-
-{
-length:data.length,
-tone:data.tone
-}
-
-);
+        }
 
 
+        return res.status(200).json({
 
-res.json({
+            summary: summary.trim()
 
-summary:finalSummary,
-
-
-stats:{
-
-inputWords:
-data.text
-.split(/\s+/)
-.length,
+        });
 
 
-chunks:
-processed.count,
+    } catch (error) {
 
 
-summaryWords:
-finalSummary
-.split(/\s+/)
-.length
+        console.error(
 
-}
+            "Summary error:",
 
+            error
 
-});
+        );
 
 
-}
-catch(error){
+        next(error);
 
-next(error);
-
-}
-
+    }
 
 }
