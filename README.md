@@ -49,8 +49,8 @@ processor/   FastAPI (Python) — cleans and chunks every request's text before 
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org) 18+
-- [Python](https://www.python.org) 3.10+
+- [Node.js](https://nodejs.org) VERSION 18 and above
+- [Python](https://www.python.org) VERSION 3.10 and above
 - [Ollama](https://ollama.com) installed and running
 
 Pull the model the API uses before starting it:
