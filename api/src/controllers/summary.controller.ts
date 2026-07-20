@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
 import { generateSummary } from "../services/openai.services";
+import { processText } from "../services/processor.service";
 
 
 const ACKNOWLEDGEMENT_PATTERN =
@@ -49,6 +50,25 @@ function stripPreamble(text: string): string {
 }
 
 
+async function collectSummary(
+
+    response: Awaited<ReturnType<typeof generateSummary>>
+
+): Promise<string> {
+
+    let text = "";
+
+    for await (const part of response) {
+
+        text += part.message.content;
+
+    }
+
+    return stripPreamble(text.trim());
+
+}
+
+
 export async function summarise(
 
     req: Request,
@@ -87,36 +107,111 @@ export async function summarise(
         }
 
 
-        const response = await generateSummary(
+        let chunks: string[];
 
-            text,
 
-            {
+        try {
 
-                length,
+            ({ chunks } = await processText(text));
 
-                tone,
+        } catch (processorError) {
 
-                format
+            console.error("Processor error:", processorError);
+
+            return res.status(502).json({
+
+                error: "The text processor service is unavailable. Make sure it is running (see README)."
+
+            });
+
+        }
+
+
+        let summary: string;
+
+
+        if (chunks.length <= 1) {
+
+
+            const response = await generateSummary(
+
+                chunks[0] ?? text,
+
+                {
+
+                    length,
+
+                    tone,
+
+                    format
+
+                }
+
+            );
+
+
+            summary = await collectSummary(response);
+
+
+        } else {
+
+
+            const partialSummaries: string[] = [];
+
+
+            for (const chunk of chunks) {
+
+                const partialResponse = await generateSummary(
+
+                    chunk,
+
+                    {
+
+                        length: "medium",
+
+                        tone,
+
+                        format: "paragraph"
+
+                    }
+
+                );
+
+
+                partialSummaries.push(
+
+                    await collectSummary(partialResponse)
+
+                );
 
             }
 
-        );
+
+            const finalResponse = await generateSummary(
+
+                partialSummaries.join("\n\n"),
+
+                {
+
+                    length,
+
+                    tone,
+
+                    format
+
+                }
+
+            );
 
 
-        let summary = "";
-
-
-        for await (const part of response) {
-
-            summary += part.message.content;
+            summary = await collectSummary(finalResponse);
 
         }
 
 
         return res.status(200).json({
 
-            summary: stripPreamble(summary.trim())
+            summary
 
         });
 
