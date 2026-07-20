@@ -4,7 +4,6 @@ import UploadBox from "../components/UploadBox";
 import LoadingCard from "../components/LoadingCard";
 import SummaryCard from "../components/SummaryCard";
 import Footer from "../components/Footer";
-import { data } from "react-router-dom";
 
 const MAX_WORDS = 2000;
 
@@ -24,8 +23,8 @@ const [error, setError] = useState("");
 const [length, setLength] = useState("medium");
 
 const [tone, setTone] = useState("professional");
-
 const [format, setFormat] = useState("paragraph");
+
 
 
 const words = text
@@ -92,7 +91,6 @@ async function generate() {
     setSummary("");
 
     setError("");
-
 
     try {
 
@@ -885,8 +883,6 @@ return (
 
                                 "casual",
 
-                                "bullet"
-
                             ].map((option) => (
 
 
@@ -919,6 +915,103 @@ return (
                                         ${
 
                                             tone === option
+
+                                                ? "border-slate-950 bg-slate-950 text-white dark:border-white dark:bg-white dark:text-slate-950"
+
+                                                : "border-slate-200 text-slate-500 hover:border-slate-400 dark:border-slate-700"
+
+                                        }
+
+                                    `}
+
+                                >
+
+                                    {option}
+
+                                </button>
+
+
+                            ))}
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div className="mt-5">
+
+
+                        <p className="
+
+                            mb-3
+
+                            text-xs
+
+                            font-semibold
+
+                            uppercase
+
+                            tracking-[0.2em]
+
+                            text-slate-400
+
+                        ">
+
+                            Format
+
+                        </p>
+
+
+                        <div className="
+
+                            flex
+
+                            flex-wrap
+
+                            gap-2
+
+                        ">
+
+
+                            {[
+
+                                "paragraph",
+
+                                "bullets",
+
+                            ].map((option) => (
+
+
+                                <button
+                                    key={option}
+
+                                    onClick={() =>
+
+                                        setFormat(option)
+
+                                    }
+
+                                    className={`
+
+                                        rounded-full
+
+                                        border
+
+                                        px-4
+
+                                        py-2.5
+
+                                        text-sm
+
+                                        capitalize
+
+                                        transition
+
+                                        ${
+
+                                            format === option
 
                                                 ? "border-slate-950 bg-slate-950 text-white dark:border-white dark:bg-white dark:text-slate-950"
 
@@ -1351,6 +1444,8 @@ return (
                         <SummaryCard
 
                             summary={summary}
+
+                            format={format}
 
                         />
 

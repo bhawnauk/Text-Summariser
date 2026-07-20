@@ -28,36 +28,41 @@ const lengthInstructions = {
 
     short: `
 
-        Write a very concise summary.
+        Write exactly 2 sentences. Not 3, not 4 — exactly 2.
 
-        Use approximately 2-3 sentences.
-
-        Include only the most important information.
+        Include only the single most important idea.
 
     `,
 
 
     medium: `
 
-        Write a balanced summary.
+        Write exactly 5 sentences.
 
-        Use approximately 4-5 sentences.
-
-        Include the main ideas and important supporting details.
+        Include the main ideas and the most important supporting details.
 
     `,
 
 
     long: `
 
-        Write a detailed summary.
+        Write exactly 8 sentences.
 
-        Use approximately 6-8 sentences.
-
-        Include all major ideas and important context.
+        Include all major ideas, supporting details, specific numbers, and examples from the text.
 
     `
 
+
+};
+
+
+const lengthLabel = {
+
+    short: "exactly 2 sentences",
+
+    medium: "exactly 5 sentences",
+
+    long: "exactly 8 sentences"
 
 };
 
@@ -67,18 +72,24 @@ const toneInstructions = {
 
     casual: `
 
-        Use a friendly, natural and conversational tone.
+        Write like you are explaining this to a friend in conversation.
 
-        Keep the language easy to understand.
+        Use contractions such as it's, don't, that's, we're.
+
+        Use simple everyday words instead of formal vocabulary.
+
+        Do not use formal transition words like "furthermore", "moreover", or "additionally".
 
     `,
 
 
     professional: `
 
-        Use a clear, polished and professional tone.
+        Write in a formal, objective register suitable for a business report.
 
-        Keep the writing precise and objective.
+        Do not use contractions.
+
+        Use precise vocabulary and formal transition words such as "however" and "additionally" where relevant.
 
     `
 
@@ -141,6 +152,15 @@ const selectedFormat =
     ] || formatInstructions.paragraph;
 
 
+const selectedLengthLabel =
+
+    lengthLabel[
+
+        options.length as keyof typeof lengthLabel
+
+    ] || lengthLabel.medium;
+
+
 const prompt = `
 
 
@@ -149,18 +169,14 @@ You are an expert AI text summarisation assistant.
 Summarise the text below accurately.
 
 IMPORTANT RULES:
-
 * Keep only the most important information.
-
 * Do not repeat the original text unnecessarily.
-
 * Do not add information that is not present.
-
 * Do not invent facts.
-
 * Preserve the original meaning.
-
 * Be direct and clear.
+* Do NOT include any preamble, label, or heading such as "Summary:", "Here is a summary:", or similar.
+* Output ONLY the summary content itself, nothing else.
 
 SUMMARY LENGTH:
 
@@ -177,6 +193,8 @@ ${selectedFormat}
 TEXT TO SUMMARISE:
 
 ${text}
+
+REMINDER: Write ${selectedLengthLabel} in a ${options.tone || "professional"} tone. Count your sentences before answering.
 
 Return only the final summary.
 
@@ -218,13 +236,13 @@ const response = await ollama.chat({
 
             options.length === "short"
 
-                ? 100
+                ? 80
 
                 : options.length === "medium"
 
-                    ? 180
+                    ? 220
 
-                    : 300
+                    : 380
 
 
     }

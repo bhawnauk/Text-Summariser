@@ -158,7 +158,7 @@ return (
 
                 ">
 
-                    Brief breaks down your content into the information
+                    TextSummariser breaks down your content into the information
 
                     that matters most, without making you read everything
 
@@ -211,7 +211,7 @@ return (
 
                     title="Get the signal"
 
-                    description="Brief processes your content and returns a focused summary in seconds."
+                    description="TextSummariser processes your content and returns a focused summary in seconds."
 
                 />
 

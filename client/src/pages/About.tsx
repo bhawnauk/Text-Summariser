@@ -111,7 +111,7 @@ return (
 
                     ">
 
-                        Brief was created around a simple idea: information
+                        TextSummariser was created around a simple idea: information
 
                         should help people move forward, not slow them down.
 
@@ -354,7 +354,7 @@ return (
 
                     ">
 
-                        Brief combines a thoughtful interface with AI-powered
+                        TextSummariser combines a thoughtful interface with AI-powered
 
                         processing to create a focused experience for working
 

@@ -2,12 +2,16 @@ interface SummaryCardProps {
 
     summary: string;
 
+    format: string;
+
 }
 
 
 export default function SummaryCard({
 
-    summary
+    summary,
+
+    format
 
 }: SummaryCardProps) {
 
@@ -21,15 +25,7 @@ export default function SummaryCard({
         .filter(Boolean);
 
 
-    const isBulletSummary = lines.some((line) =>
-
-        line.startsWith("-") ||
-
-        line.startsWith("•") ||
-
-        line.startsWith("*")
-
-    );
+    const isBulletSummary = format === "bullets";
 
 
     return (
