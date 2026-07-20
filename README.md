@@ -115,6 +115,40 @@ The app runs at `http://localhost:5173`.
 
 With all three running, open `http://localhost:5173` in your browser, paste in some text, and generate a summary.
 
+## Deployment
+
+The client is deployed to Vercel: **https://textsummariser.vercel.app**
+
+Ollama can't run on Vercel (or most serverless/free PaaS tiers) — it needs a persistent process with the model held in memory. So the actual setup is:
+
+- **Client** → Vercel, built with `VITE_API_URL` pointing at the backend.
+- **`api` + `processor` + Ollama** → run locally (or on whatever machine you keep on), exposed to the internet via a free [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps).
+
+This means the deployed site only works while your machine, with all three local services running, is on and connected.
+
+### Starting the tunnel
+
+```bash
+cloudflared tunnel --url http://localhost:5050
+```
+
+This prints a random `https://<words>.trycloudflare.com` URL. It stays stable as long as this command keeps running, but changes every time it's restarted (reboot, sleep, network drop, etc.). If you want a URL that never changes, set up a [named tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps) against a domain you own instead.
+
+### After the tunnel URL changes
+
+1. Update the API's CORS allowlist in `api/.env`:
+   ```
+   CLIENT_ORIGIN=http://localhost:5173,https://textsummariser.vercel.app,https://textsummariser-bhawna-yadavs-projects.vercel.app
+   ```
+   (this only needs to change if the *Vercel* URL changes, not the tunnel URL — restart the API process after editing, since `.env` isn't hot-reloaded)
+2. Point the client at the new tunnel URL:
+   ```bash
+   cd client
+   vercel env rm VITE_API_URL production
+   echo "https://<new-tunnel-url>" | vercel env add VITE_API_URL production
+   vercel --prod --yes
+   ```
+
 ## API reference
 
 ### `POST /api/summarise`

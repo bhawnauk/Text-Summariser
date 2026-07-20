@@ -7,6 +7,8 @@ import Footer from "../components/Footer";
 
 const MAX_WORDS = 2000;
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5050";
+
 export default function Home() {
 
 
@@ -97,7 +99,7 @@ async function generate() {
 
         const response = await fetch(
 
-            "http://localhost:5050/api/summarise",
+            `${API_URL}/api/summarise`,
 
             {
 

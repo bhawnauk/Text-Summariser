@@ -13,11 +13,18 @@ import limiter from "./middleware/limiter.middleware";
 const app = express();
 
 
+const allowedOrigins = (
+process.env.CLIENT_ORIGIN || "http://localhost:5173"
+)
+.split(",")
+.map((origin) => origin.trim());
+
+
 app.use(helmet());
 
 app.use(
 cors({
-origin:"http://localhost:5173"
+origin: allowedOrigins
 })
 );
 
