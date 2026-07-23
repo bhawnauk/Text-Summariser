@@ -132,7 +132,6 @@ This means the deployed site only works while your machine, with all three local
 cloudflared tunnel --url http://localhost:5050
 ```
 
-This prints a random `https://<words>.trycloudflare.com` URL. It stays stable as long as this command keeps running, but changes every time it's restarted (reboot, sleep, network drop, etc.). If you want a URL that never changes, set up a [named tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps) against a domain you own instead.
 
 ### After the tunnel URL changes
 
